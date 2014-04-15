@@ -1,11 +1,23 @@
 /*global define*/
 /**
  * Example usage:
- * var adlift = new Adlift('http://sar.66.ru');
- * adlift.getBanner('<slotId>').writeTo('<divId>');
  *
- * You can modify endpoint or global code later, just assigning them to:
- * adlift.endpoint and adlift.globalCode
+ * Create client:
+ * var adlift = new Adlift('http://sar.66.ru');
+ *
+ * Get banner and write it to DOM:
+ * var banner = adlift.getBanner('<slotId>').writeTo('<divId>');
+ *
+ * Or check if banner available:
+ * adlift.getBanner('<slotId>').isAvailable(function(result) {
+ *     if (result) {
+ *         alert('Banner is available!');
+ *         this.writeTo('<divId>');
+ *     }
+ * });
+ *
+ * You can modify global code, just assigning it to:
+ * adlift.globalCode
  */
 (function () {
     'use strict';
@@ -115,7 +127,7 @@
          * @class Adlift
          */
         var Adlift = function (endpoint) {
-            this.endpoint = endpoint || 'http://show.adlift.ru/';
+            endpoint = endpoint || 'http://show.adlift.ru/';
             this.globalCode = null;
 
             /**
