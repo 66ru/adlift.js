@@ -6,10 +6,10 @@
  * var adlift = new Adlift('http://sar.66.ru');
  *
  * Get banner and write it to DOM:
- * var banner = adlift.getBanner('<slotId>').writeTo('<divId>');
+ * var banner = adlift.getBanner('<slotId>', '<code>').writeTo('<divId>');
  *
  * Or check if banner available:
- * adlift.getBanner('<slotId>').isAvailable(function(result) {
+ * adlift.getBanner('<slotId>', '<code>').isAvailable(function(result) {
  *     if (result) {
  *         alert('Banner is available!');
  *         this.writeTo('<divId>');
