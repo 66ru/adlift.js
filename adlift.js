@@ -3,6 +3,9 @@
  * Example usage:
  * var adlift = new Adlift('http://sar.66.ru');
  * adlift.getBanner('<slotId>').writeTo('<divId>');
+ *
+ * You can modify endpoint or global code later, just assigning them to:
+ * adlift.endpoint and adlift.globalCode
  */
 (function () {
     'use strict';
@@ -112,65 +115,121 @@
          * @class Adlift
          */
         var Adlift = function (endpoint) {
-            endpoint = endpoint || 'http://show.adlift.ru/';
+            this.endpoint = endpoint || 'http://show.adlift.ru/';
+            this.globalCode = null;
 
             /**
              * @class Banner
              * @constructor
              */
-            function Banner(slotId) {
+            function Banner(slotId, code) {
                 var self = this;
 
                 // Deferred like stack
-                this._done = [];
-                this._resolved = false;
+                var doneStack = [],
+                    resolved = false;
 
-                this._writeTo = function (elementId) {
+                function writeTo(elementId) {
                     document.getElementById(elementId).innerHTML = this.html;
-                };
+                }
+
+                function isAvailable(cb) {
+                    if (typeof cb !== 'function') {
+                        throw new Error('No callback passed');
+                    }
+
+                    cb(self.banner_available);
+                }
+
 
                 /**
                  * Execute deferred stack
                  * @param list
                  */
-                this.execute = function (list) {
+                function execute(list) {
                     var i = list.length;
 
                     while (i) {
                         i -= 1;
-                        list[i].func.apply(this, list[i].args);
+                        list[i].func.apply(self, list[i].args);
                     }
-                };
+                }
+
+                var url = endpoint + slotId + '.js',
+                    data = [];
+
+                // Check for persotracker id
+                if (typeof window.ptrk === 'string') {
+                    data.push({
+                        key: 'ptrk',
+                        val: window.ptrk
+                    });
+                }
+
+                if (typeof code === 'string') {
+                    data.push({
+                        key: 'code',
+                        val: code
+                    });
+                }
+
+                // Convert data to query string
+                var i = data.length,
+                    pairs = [];
+
+                if (i) {
+                    url += '?';
+                }
+
+                while (i) {
+                    i -= 1;
+                    pairs.push(data[i].key + '=' + data[i].val);
+                }
+
+                url += pairs.join('&');
 
                 // Send jsonp
-                jsonp(endpoint + slotId + '.js', function (data, status) {
+                jsonp(url, function (data, status) {
                     if (status !== 'success') {
                         throw new Error('Failed to get banner for slot: ' + slotId);
                     }
 
                     data = JSON.parse(data);
+
                     self.html = data['banner_html'];
                     self.id = data['slot_id'];
+                    self.banner_available = data['banner_available'];
 
+                    resolved = true;
                     // Resolve deferred stack
-                    self.execute(self._done);
+                    execute(doneStack);
                 });
-            }
 
-            Banner.prototype = {
-                writeTo: function (elementId) {
-                    if (this._resolved) {
-                        this._writeTo(elementId);
+                return {
+                    writeTo: function (elementId) {
+                        if (resolved) {
+                            writeTo(elementId);
+                            return this;
+                        }
+
+                        doneStack.push({func: writeTo, args: arguments});
+                        return this;
+                    },
+                    isAvailable: function (cb) {
+                        if (resolved) {
+                            isAvailable(cb);
+                        } else {
+                            doneStack.push({func: isAvailable, args: arguments});
+                        }
+
                         return this;
                     }
+                };
+            }
 
-                    this._done.push({func: this._writeTo, args: arguments});
-                    return this;
-                }
-            };
-
-            this.getBanner = function (slotId) {
-                return new Banner(slotId);
+            this.getBanner = function (slotId, code) {
+                code = code || this.globalCode;
+                return new Banner(slotId, code);
             };
         };
         return Adlift;
