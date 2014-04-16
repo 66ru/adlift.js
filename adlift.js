@@ -162,9 +162,9 @@
 
                         // Add banner html & script to DOM
                         document.getElementById(elementId).innerHTML = html;
-                        document.head.appendChild(script);
+                        document.getElementById(elementId).appendChild(script);
                     } else {
-                        document.getElementById(elementId).innerHTML = html;
+                        document.getElementById(elementId).innerHTML = self.html;
                     }
                 }
 
@@ -207,11 +207,6 @@
                         val: code
                     });
                 }
-
-                data.push({
-                    key: 'url',
-                    val: 'http://ekabu.ru/'
-                });
 
                 // Convert data to query string
                 var i = data.length,
@@ -282,4 +277,3 @@
 
     window.Adlift = fabric;
 })();
-
