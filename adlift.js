@@ -142,7 +142,30 @@
                     resolved = false;
 
                 function writeTo(elementId) {
-                    document.getElementById(elementId).innerHTML = this.html;
+                    // Check if banner html contains script tag
+                    var re = /<script\b[^>]*>([\s\S]*?)<\/script>/im,
+                        match = self.html.match(re);
+
+                    if (match) {
+                        // Remove script from banner html
+                        var html = self.html.replace(match[0], ''),
+                            script = document.createElement('script'),
+                            cbName = 'adlift_script_' + getRandomId();
+                        // Create callback for script remove
+                        window[cbName] = function () {
+                            script.parentNode.removeChild(script);
+                            window[cbName] = null;
+                            delete window[cbName];
+                        };
+                        // Append callback call
+                        script.innerHTML = match[1] + '; ' + cbName + '();';
+
+                        // Add banner html & script to DOM
+                        document.getElementById(elementId).innerHTML = html;
+                        document.head.appendChild(script);
+                    } else {
+                        document.getElementById(elementId).innerHTML = html;
+                    }
                 }
 
                 function isAvailable(cb) {
@@ -184,6 +207,11 @@
                         val: code
                     });
                 }
+
+                data.push({
+                    key: 'url',
+                    val: 'http://ekabu.ru/'
+                });
 
                 // Convert data to query string
                 var i = data.length,
