@@ -134,7 +134,7 @@
              * @class Banner
              * @constructor
              */
-            function Banner(slotId, code) {
+            function Banner(slotId, code, writeSync) {
                 var self = this;
 
                 // Deferred like stack
@@ -223,6 +223,14 @@
 
                 url += pairs.join('&');
 
+                if (writeSync) {
+                    /*jshint -W060*/
+                    document.write("<scr"+"ipt type='text/javascript' src='"+url);
+                    document.write("'></scr"+"ipt>");
+                    /*jshint +W060*/
+                    return;
+                }
+
                 // Send jsonp
                 jsonp(url, function (data, status) {
                     if (status !== 'success') {
@@ -266,6 +274,11 @@
                 code = code || this.globalCode;
                 return new Banner(slotId, code);
             };
+
+            this.writeSync = function (slotId, code) {
+                code = code || this.globalCode;
+                return new Banner(slotId, code, true);
+            };
         };
         return Adlift;
     };
@@ -275,5 +288,6 @@
         define(fabric);
     }
 
-    window.Adlift = fabric;
+    window.Adlift = fabric();
 })();
+
