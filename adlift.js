@@ -16,6 +16,8 @@
  *     }
  * });
  *
+ * Sync way to write banner (document.write in place)
+ * adlift.writeSync('<slotId>', '<code>');
  * You can modify global code, just assigning it to:
  * adlift.globalCode
  */
@@ -194,10 +196,10 @@
                     data = [];
 
                 // Check for persotracker id
-                if (typeof window.ptrk === 'string') {
+                if (typeof window.getPt === 'function') {
                     data.push({
                         key: 'ptrk',
-                        val: window.ptrk
+                        val: window.getPt()
                     });
                 }
 
