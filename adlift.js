@@ -227,8 +227,8 @@
 
                 if (writeSync) {
                     /*jshint -W060*/
-                    document.write("<scr"+"ipt type='text/javascript' src='"+url);
-                    document.write("'></scr"+"ipt>");
+                    document.write("<scr" + "ipt type='text/javascript' src='" + url);
+                    document.write("'></scr" + "ipt>");
                     /*jshint +W060*/
                     return;
                 }
@@ -286,10 +286,10 @@
     };
 
     // AMD support
-    if (typeof define !== 'undefined') {
+    if (typeof define === 'function' && define.amd) {
         define(fabric);
+    } else {
+        window.Adlift = fabric();
     }
-
-    window.Adlift = fabric();
 })();
 

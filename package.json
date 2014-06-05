@@ -1,28 +1,34 @@
 {
   "name": "adlift.js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Adlift.js libary",
   "main": "Gruntfile.js",
   "scripts": {
-    "test": "grunt test"
+    "build": "grunt build"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/bazilio91/adlift.js.git"
+    "url": "git://github.com/66ru/adlift.js.git"
   },
   "keywords": [
     "adlift"
   ],
   "author": "adlift.ru",
+  "maintainers": [
+    {
+      "name": "Vasily Ostanin",
+      "email": "bazilio91@gmail.com",
+      "web": "https://github.com/bazilio91"
+    }
+  ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/bazilio91/adlift.js/issues"
+    "url": "https://github.com/66ru/adlift.js/issues"
   },
   "homepage": "adlift.ru",
   "devDependencies": {
     "grunt": "^0.4.4",
     "grunt-contrib-concat": "^0.4.0",
-    "grunt-contrib-watch": "^0.6.1",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-uglify": "^0.4.0"
   }
